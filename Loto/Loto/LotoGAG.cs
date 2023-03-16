@@ -16,7 +16,7 @@ namespace LotoClassNS
         // Combinación válida (si es aleatoria, siempre es válida, sino, no tiene porqué)
         private bool esValida = false;
 
-        public int[] Premiados
+        public int[] Combinacion
         {
             get => numerosCombinacion;
             set => numerosCombinacion = value;
@@ -28,7 +28,7 @@ namespace LotoClassNS
 
         public static int NUMERO_MAYOR => nUMERO_MAYOR;
 
-        public bool EsValida { get => esValida; set => esValida = value; }
+        public bool esCorrecta { get => esValida; set => esValida = value; }
 
         /// <summary>
         /// Constructor que genera una combinación aleatoria correcta en el que caso de que no se introduzca ningún parámetro
@@ -58,6 +58,46 @@ namespace LotoClassNS
             }
         }
 
+        //Método que comprueba que la combinación introducida es válida
+        private bool ComprobarValidez(int[] misNumeros)
+        {
+            for (int i = 0; i < MAX_NUMEROS; i++)
+            {
+                if (misNumeros[i] >= NUMERO_MENOR && misNumeros[i] <= NUMERO_MAYOR)
+                {
+                    int j;
+
+                    for (j = 0; j < i; j++)
+                    {
+                        if (misNumeros[i] == Combinacion[j])
+                        {
+                            break;
+                        }
+                    }
+
+                    if (i == j)
+                    {
+                        // validamos la combinación
+                        Combinacion[i] = misNumeros[i];
+                    }
+
+                    else
+                    {
+                        esCorrecta = false;
+                        return;
+                    }
+                }
+                else
+                {
+                    // La combinación no es válida, terminamos
+                    esCorrecta = false;
+                    return;
+                }
+
+                esCorrecta = true;
+            }
+        }
+
         /// <summary>
         /// Método que comprueba el número de aciertos
         /// </summary>
@@ -71,7 +111,7 @@ namespace LotoClassNS
             for (int i = 0; i < MAX_NUMEROS; i++)
                 for (int j = 0; j < MAX_NUMEROS; j++)
                 {
-                    if (combinacionGanadora[i] == Premiados[j])
+                    if (combinacionGanadora[i] == Combinacion[j])
                     {
                         numeroAciertos++;
                     }
@@ -80,45 +120,7 @@ namespace LotoClassNS
             return numeroAciertos;
         }
 
-        //Método que comprueba que la combinación introducida es válida
-        private bool ComprobarValidez(int[] misNumeros)
-        {
-            for (int i = 0; i < MAX_NUMEROS; i++)
-            {
-                if (misNumeros[i] >= NUMERO_MENOR && misNumeros[i] <= NUMERO_MAYOR)
-                {
-                    int j;
-
-                    for (j = 0; j < i; j++)
-                    {
-                        if (misNumeros[i] == Premiados[j])
-                        {
-                            break;
-                        }
-                    }
-
-                    if (i == j)
-                    {
-                        // validamos la combinación
-                        Premiados[i] = misNumeros[i];
-                    }
-
-                    else
-                    {
-                        EsValida = false;
-                        return;
-                    }
-                }
-                else
-                {
-                    // La combinación no es válida, terminamos
-                    EsValida = false;
-                    return;
-                }
-
-                EsValida = true;
-            }
-        }
+        
 
         //Método que genera una combinación aleatoria válida
         private int GenerarCombinacionValida(Random numeroAleatorio)
@@ -132,7 +134,7 @@ namespace LotoClassNS
                 // Comprobamos que el número no está
                 for (j = 0; j < i; j++)
                 {
-                    if (Premiados[j] == numero)
+                    if (Combinacion[j] == numero)
                     {
                         break;
                     }
@@ -141,12 +143,12 @@ namespace LotoClassNS
                 // Si i==j, el número no se ha encontrado en la lista, lo añadimos
                 if (i == j)
                 {
-                    Premiados[i] = numero;
+                    Combinacion[i] = numero;
                     i++;
                 }
             } while (i < MAX_NUMEROS);
 
-            EsValida = true;
+            esCorrecta = true;
             return i;
         }
     }
